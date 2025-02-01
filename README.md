@@ -33,10 +33,6 @@ let providers = await client.getProviders();
 
 console.log("[LOG] Available providers:", providers);
 
-let stdinReader = readline.createInterface(process.stdin, process.stdout);
-let provider = (await stdinReader.question("[INPUT] Provider: ")) as TtsProviderName;
-let apiKey = await stdinReader.question("[INPUT] API Key: ");
-
 await client.loadProvider(provider, {
     api_key: apiKey
 });
