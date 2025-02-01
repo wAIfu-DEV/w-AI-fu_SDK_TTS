@@ -1,0 +1,20 @@
+{
+  "name": "w-ai-fu_sdk_tts",
+  "version": "1.0.0",
+  "description": "TTS module of the w-AI-fu AI Vtuber SDK",
+  "main": "index.ts",
+  "scripts": {
+    "run": "node start_module.js 7563",
+    "run client": "npx tsx example_client.ts"
+  },
+  "author": "w-AI-fu_DEV",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ws": "^8.5.14",
+    "tsx": "^4.19.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@msgpack/msgpack": "^3.0.0-beta3"
+  }
+}

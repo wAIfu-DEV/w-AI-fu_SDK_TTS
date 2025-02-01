@@ -1,0 +1,138 @@
+Legend:
+-> Input message (from client)
+<- Output message (from module)
+
+
+
+-> get_providers
+{
+    type: "get_providers",
+    unique_request_id: string
+}
+<- get_providers_done
+{
+    type: "get_providers",
+    unique_request_id: string,
+    providers: string[]
+}
+
+
+
+-> load
+{
+    type: "load",
+    unique_request_id: string,
+    provider: string,
+    api_key: (optional)string,
+    preload_model_id: (optional)string
+}
+<- load_ack
+{
+    type: "load",
+    unique_request_id: string,
+}
+<- load_done
+{
+    "type": "load_done",
+    "unique_request_id": "<id of initial request>",
+    "provider": "<provider>",
+    "is_error": false,
+    "error": "SUCCESS" // or "<error type>" if is_error is true
+}
+
+
+-> get_provider_generate_params
+{
+    type: "get_provider_generate_params",
+    unique_request_id: string
+}
+<- get_provider_generate_params_done
+{
+    type: "get_provider_generate_params_done",
+    unique_request_id: string,
+    params: {
+        <entries>
+    }
+}
+
+
+-> get_stream_format
+{
+    type: "get_stream_format",
+    unique_request_id: string
+}
+<- get_stream_format_done
+{
+    type: "get_stream_format",
+    unique_request_id: string,
+    audio_format: {
+        format: "pcm"
+        bit_depth: 16
+        frequency: 44100,
+        channel_nb: 1
+    }
+}
+
+
+-> generate
+{
+    type: "generate",
+    unique_request_id: string,
+    input: "<text>",
+    params: {
+        model_id: string,
+        voice_id: string,
+        convert: (optional){
+            format: (optional)"wav" | "mp3" | "ogg" | "flac",
+            // Wav PCM format
+            bit_depth: (optional)16
+            frequency: (optional)44100,
+            channel_nb: 1
+            // For Mp3 and ogg
+            bit_rate: 128000
+        }
+    }
+    stream: boolean
+}
+<- generate_ack
+{
+    type: "generate_ack",
+    unique_request_id: string
+}
+
+// for non-stream
+<- generate_done
+{
+    type: "generate_done",
+    unique_request_id: string,
+    file_path: string,
+    audio_format: {
+        format: "wav" | "mp3" | "ogg" | "flac"
+        // Wav PCM format
+        bit_depth: (optional)16
+        frequency: (optional)44100,
+        channel_nb: 1
+        // For Mp3 and ogg
+        bit_rate: 128000
+    },
+    "is_error": false,
+    "error": "SUCCESS" // or "<error type>" if is_error is true
+}
+
+// for stream
+// stream chunks
+<-  $"<unique request id>"<|end_of_id|>(PCM DATA)
+    
+    Packet of bytes with first byte being a '$' character, next bytes being the
+    unique request ID up to the string "<|end_of_id|>"
+    After "<|end_of_id|>", data is PCM data.
+
+// stream end
+<- generate_stream_done
+{
+    type: "generate_stream_done",
+    unique_request_id: string,
+    "is_error": false,
+    "error": "SUCCESS" // or "<error type>" if is_error is true
+}
+
